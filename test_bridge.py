@@ -100,8 +100,8 @@ def test_bridge_page():
         print("[FAIL] Недостаточно CSS медиа-запросов для мобильных экранов")
         errors += 1
 
-    # Проверка палитры Kinfolk / Toast
-    required_colors = ['#F9F8F6', '#221B1A', '#D4AF37', '#3A0E1C']
+    # Проверка палитры Vintage Junk Journal
+    required_colors = ['#F9F8F6', '#1E1716', '#C5A059', '#702630']
     colors_found = [c for c in required_colors if c.lower() in css.lower()]
     if len(colors_found) == len(required_colors):
         print(f"[PASS] Фирменная палитра внедрена на 100% ({', '.join(colors_found)})")

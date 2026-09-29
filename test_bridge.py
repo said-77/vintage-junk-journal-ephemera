@@ -88,8 +88,8 @@ def test_bridge_page():
             if 'target="_blank"' not in attrs:
                 print("[WARN] Ссылка не имеет target=\"_blank\"")
                 warnings += 1
-            if 'rel="noopener noreferrer"' not in attrs:
-                print("[WARN] Ссылка не имеет rel=\"noopener noreferrer\"")
+            if 'noopener' not in attrs or 'noreferrer' not in attrs:
+                print("[WARN] Ссылка не имеет noopener noreferrer")
                 warnings += 1
 
     # 5. Аудит адаптивности CSS
@@ -101,7 +101,7 @@ def test_bridge_page():
         errors += 1
 
     # Проверка палитры Vintage Junk Journal
-    required_colors = ['#F9F8F6', '#1E1716', '#C5A059', '#702630']
+    required_colors = ['#FAF8F5', '#1E1716', '#C5A059', '#702630']
     colors_found = [c for c in required_colors if c.lower() in css.lower()]
     if len(colors_found) == len(required_colors):
         print(f"[PASS] Фирменная палитра внедрена на 100% ({', '.join(colors_found)})")

@@ -70,21 +70,29 @@ def test_bridge_page():
         print(f"[WARN] Обнаружены внешние ресурсы: {external_links + external_scripts}")
         warnings += 1
 
-    # 4. Аудит партнерских ссылок
+    # 4. Аудит партнерских ссылок (Deep Links)
     cta_links = re.findall(r'<a\s+[^>]*href=["\']([^"\']+)["\'][^>]*>', html, re.IGNORECASE)
-    affiliate_links = [l for l in cta_links if EXPECTED_AFFILIATE_URL in l]
+    affiliate_links = [l for l in cta_links if "creativefabrica.com" in l and f"ref={AFFILIATE_ID}" in l]
     print(f"[INFO] Найдено ссылок перехода: {len(cta_links)} (из них партнерских Creative Fabrica: {len(affiliate_links)})")
 
-    if len(affiliate_links) >= 5:
-        print(f"[PASS] Все CTA-кнопки содержат точный URL с Affiliate ID {AFFILIATE_ID}")
+    expected_queries = [
+        "vintage+junk+journal+paper+pack",
+        "vintage+botanical+herbarium+ephemera",
+        "victorian+ephemera+letters+lace",
+        "antique+celestial+astronomy+journal"
+    ]
+    queries_ok = all(any(q in l for l in affiliate_links) for q in expected_queries)
+
+    if len(affiliate_links) >= 5 and queries_ok:
+        print(f"[PASS] Все 5 CTA-кнопок содержат точные Deep Links с Affiliate ID {AFFILIATE_ID} и целевыми поисковыми запросами")
     else:
-        print(f"[FAIL] Недостаточно партнерских ссылок (найдено {len(affiliate_links)}, ожидалось минимум 5)")
+        print(f"[FAIL] Ошибка в партнерских Deep Links (найдено {len(affiliate_links)}, запросы валидны: {queries_ok})")
         errors += 1
 
     # Проверка параметров безопасности ссылок
     for match in re.finditer(r'<a\s+([^>]+)>', html, re.IGNORECASE):
         attrs = match.group(1)
-        if EXPECTED_AFFILIATE_URL in attrs:
+        if "creativefabrica.com" in attrs:
             if 'target="_blank"' not in attrs:
                 print("[WARN] Ссылка не имеет target=\"_blank\"")
                 warnings += 1
